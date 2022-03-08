@@ -3,6 +3,7 @@ package com.cognixia.jump.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.cognixia.jump.filter.JwtRequestFilter;
 
 // this class will detail how spring security is going to handle authorization and authentication
 @EnableWebSecurity
@@ -19,6 +23,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	UserDetailsService userDetailsService;
+	
+	@Autowired
+	JwtRequestFilter jwtRequestFilter;
 	
 	
 	// handle the Authentication( who are you?)
@@ -54,10 +61,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		http.csrf().disable()
 			.authorizeRequests()
 			.antMatchers( HttpMethod.POST, "/api/users").permitAll()
+			.antMatchers( HttpMethod.POST, "/api/authenticate").permitAll()
+			.antMatchers( HttpMethod.GET, "/api/hello").hasAnyRole("ADMIN")
+			.antMatchers( HttpMethod.POST, "/api/add/user").hasAnyRole("ADMIN")
 			.antMatchers( HttpMethod.GET, "/api/users").permitAll()
 			.antMatchers("/api/hello").hasAnyRole("USER","ADMIN")
 			.antMatchers("/**").hasRole("ADMIN")
 			.and().httpBasic();
+		
+		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		
+		
 	}
 	
 	// mainly used to decode passwords
@@ -71,6 +85,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		
 		// BCrypt encoder to do proper encoding ( very simple to set up and can use others in a similar way)
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 	
 	

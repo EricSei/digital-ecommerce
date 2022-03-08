@@ -42,6 +42,17 @@ public class UserController {
 		return ResponseEntity.status(201).body(created);
 	}
 	
+	@PostMapping("/add/user")
+	public ResponseEntity<?> addUser(@RequestBody User user){
+		user.setId(null);
+		// use a password encoder to encode the password so it is not saved as plain text in the database
+		user.setPassword(encoder.encode(user.getPassword()));
+		
+		User created = repo.save(user);
+		
+		return ResponseEntity.status(201).body(created);
+	}
+	
 	@PostMapping("/users/authenticate")
 	public ResponseEntity<?> authenticate(@RequestBody User user){
 		user.setId(null);

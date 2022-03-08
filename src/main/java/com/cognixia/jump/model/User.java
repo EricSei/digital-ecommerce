@@ -23,7 +23,7 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public static enum Role {
-		USER, ADMIN
+		ROLE_USER, ROLE_ADMIN
 	}
 	
 	@Id
@@ -50,7 +50,7 @@ public class User implements Serializable {
 	private List<Order> orders;
 	
 	public User() {
-		this(null, "N/A", "N/A", "N/A", Role.USER, true, null );
+		this(null, "N/A", "N/A", "N/A", Role.ROLE_USER, true, null );
 	}
 
 	public User(Integer id, String username, String email, String password, Role role, boolean enabled, List<Order> orders) {
