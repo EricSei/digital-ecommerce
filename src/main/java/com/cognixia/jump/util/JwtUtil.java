@@ -25,6 +25,10 @@ public class JwtUtil {
 		return extractClaim(token, Claims::getSubject);
 	}
 	
+	public String extractUserId(String token) {
+		return extractClaim(token, Claims::getSubject);
+	}
+	
 	
 	// get expiration date for this token
 	public Date extractExpiration(String token) {
@@ -63,7 +67,8 @@ public class JwtUtil {
 		
 		// claims info/data you want to include in payload of token besides the user info
 		Map<String, Object> claims = new HashMap<>();
-		
+		//key: getUserId, get it from useDetails
+//		claims.put("userId" , "userId");
 		// returns token for user given along with any claims
 		return createToken(claims, userDetails.getUsername());
 	}
@@ -76,6 +81,7 @@ public class JwtUtil {
 		// set when the token was issued
 		// set expiration when token expires and can be no longer used (here its set for 10 hrs)
 		// sign it with particular algorithm and secret key that lets you know this token is authentic
+		//subject -> userId, 
 		return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt( new Date( System.currentTimeMillis() ) )
 				.setExpiration( new Date( System.currentTimeMillis() + 1000 * 60 * 60 * 10 ) )
 				.signWith(SignatureAlgorithm.HS256, SECRET_KEY)

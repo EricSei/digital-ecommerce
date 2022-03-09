@@ -2,6 +2,7 @@ package com.cognixia.jump.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ public class OrderProductDetails implements Serializable  {
 	private Integer id;
 
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE) //create foreign key
 	@JoinColumn(name="order_id", referencedColumnName = "id")
 	private Order order;
 	
@@ -45,7 +46,6 @@ public class OrderProductDetails implements Serializable  {
 		this.product = product;
 		this.qty = qty;
 	}
-
 
 
 	public Integer getId() {
@@ -94,5 +94,11 @@ public class OrderProductDetails implements Serializable  {
 		this.qty = qty;
 	}
 
+	@Override
+	public String toString() {
+		return "OrderProductDetails [id=" + id + ", order=" + order + ", product=" + product + ", qty=" + qty + "]";
+	}
+	
+	
 	
 }

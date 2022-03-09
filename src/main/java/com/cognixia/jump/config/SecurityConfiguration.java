@@ -34,16 +34,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure( AuthenticationManagerBuilder auth) throws Exception {
 		
-//		auth.inMemoryAuthentication()
-//			.withUser("user1")
-//			.password("{noop}pw123") //{noop} -> not a part of password, stops encoding
-//			.roles("USER")
-//			.and()
-//			.withUser("admin1")
-//			.password("{noop}pw123")
-//			.roles("ADMIN");
-		
-		// do the authorizations through the user details service, this will load the user from the database instead of in memory
 		auth.userDetailsService(userDetailsService);
 		
 	}
@@ -60,11 +50,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		
 		http.csrf().disable()
 			.authorizeRequests()
-			.antMatchers( HttpMethod.POST, "/api/users").permitAll()
-			.antMatchers( HttpMethod.POST, "/api/authenticate").permitAll()
-			.antMatchers( HttpMethod.GET, "/api/hello").hasAnyRole("ADMIN")
-			.antMatchers( HttpMethod.POST, "/api/add/user").hasAnyRole("ADMIN")
-			.antMatchers( HttpMethod.GET, "/api/users").permitAll()
+			.antMatchers( HttpMethod.GET, "/v3/api-docs/").hasAnyRole("USER", "ADMIN")
+			.antMatchers( HttpMethod.POST, "/api/users/login").permitAll()
+			.antMatchers( HttpMethod.GET, "/api/products").permitAll() //everyone can access product list
+			.antMatchers( HttpMethod.GET, "/api/users").hasRole("ADMIN")
+			.antMatchers( HttpMethod.GET, "/api/orders").hasAnyRole("USER")
+			.antMatchers( HttpMethod.GET, "/api/orders/**").hasAnyRole("USER")
+			.antMatchers( HttpMethod.POST, "/api/orders").hasAnyRole("USER")
+			.antMatchers( HttpMethod.POST, "/api/authenticate").permitAll()	
 			.antMatchers("/api/hello").hasAnyRole("USER","ADMIN")
 			.antMatchers("/**").hasRole("ADMIN")
 			.and().httpBasic();

@@ -15,6 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 //Order 1 -> OrderProduct many
 @Entity
 @Table(name = "orders")
@@ -27,7 +29,8 @@ public class Order  implements Serializable {
 	private Integer id;
 	
 
-	 @Column(name="date_added", insertable = false)
+	 @Column(name="date_added", updatable = false)
+	 @CreationTimestamp
 	 private LocalDateTime dateAdded;
 	
 	@Column
@@ -43,6 +46,7 @@ public class Order  implements Serializable {
 	public Order() {
 		
 	}
+	
 
 	public Order(Integer id, LocalDateTime dateAdded, String status, User user,
 			List<OrderProductDetails> orderProducts) {
@@ -92,6 +96,12 @@ public class Order  implements Serializable {
 
 	public void setOrderProducts(List<OrderProductDetails> orderProducts) {
 		this.orderProducts = orderProducts;
+	}
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", dateAdded=" + dateAdded + ", status=" + status + ", user=" + user
+				+ ", orderProducts=" + orderProducts + "]";
 	}
 	
 }

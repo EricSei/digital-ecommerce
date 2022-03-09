@@ -1,6 +1,7 @@
 package com.cognixia.jump.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cognixia.jump.exception.ResourceNotFoundException;
 import com.cognixia.jump.model.User;
 import com.cognixia.jump.repository.UserRepository;
 
@@ -42,15 +44,23 @@ public class UserController {
 		return ResponseEntity.status(201).body(created);
 	}
 	
-	@PostMapping("/add/user")
-	public ResponseEntity<?> addUser(@RequestBody User user){
-		user.setId(null);
-		// use a password encoder to encode the password so it is not saved as plain text in the database
-		user.setPassword(encoder.encode(user.getPassword()));
+	@PostMapping("/users/login")
+	public ResponseEntity<?> loginUser(@RequestBody User user) throws ResourceNotFoundException{
+
+		String requestPassword = encoder.encode(user.getPassword());
 		
-		User created = repo.save(user);
+		Optional<User> found = repo.findByUsername(user.getUsername());
+		if(!found.isPresent()) {
+			throw new ResourceNotFoundException("user name not found");
+		}
 		
-		return ResponseEntity.status(201).body(created);
+		User savedUser = found.get();
+		//System.out.println("saved pw: "+savedUser.getPassword());
+		if( requestPassword.equals(savedUser.getPassword())) {
+			return null;
+		}
+		return ResponseEntity.status(201).body(savedUser);
+		
 	}
 	
 	@PostMapping("/users/authenticate")
