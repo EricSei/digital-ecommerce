@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -31,12 +33,15 @@ public class User implements Serializable {
 	private Integer id;
 	
 	@Column(unique= true, nullable = false)
+	@NotBlank(message = "Username cannot be empty or null")
 	private String username;
 	
 	@Column(unique=true, nullable = false)
+	@NotNull
 	private String email;
 	
 	@Column(nullable = false)
+	@NotNull
 	private String password;
 	
 	@Enumerated(EnumType.STRING)
@@ -52,6 +57,7 @@ public class User implements Serializable {
 	public User() {
 		this(null, "N/A", "N/A", "N/A", Role.ROLE_USER, true, null );
 	}
+
 
 	public User(Integer id, String username, String email, String password, Role role, boolean enabled, List<Order> orders) {
 		super();

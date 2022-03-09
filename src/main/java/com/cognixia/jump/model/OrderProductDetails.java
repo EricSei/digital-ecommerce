@@ -38,7 +38,7 @@ public class OrderProductDetails implements Serializable  {
 	public OrderProductDetails() {
 		
 	}
-
+	// Order_id : Product_id
 	public OrderProductDetails(Integer id, Order order, Product product, int qty) {
 		super();
 		this.id = id;

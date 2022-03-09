@@ -43,11 +43,12 @@ public class OrderService {
 		String username = jwtUtil.extractUsername(jwt);
 		
 		User user = userRepo.findByUsername(username).get();
+		
 		int userId = user.getId();
 		
 		List<Order> orders = orderRepo.getOrdersByUserId(userId);
 		for(Order order: orders) {
-			order.setUser(null);
+			order.setUser(user);
 		}
 		
 		return orders;
@@ -62,19 +63,27 @@ public class OrderService {
 			
 			User user = userRepo.findByUsername(username).get();
 			
+		
 			order.setId(null);
 			
-			System.out.println("order : " + order);
 			
 			//user added
 			order.setUser(user);
-						
+			
+			//produc
 			
 			Order added = orderRepo.save(order);
 			
 			
 			return added;
 			
+	}
+	
+	public List<Order> getOrdersByStatus(String status) {
+		
+		return orderRepo.getOrdersFromStatus(status);
+		
+		
 	}
 
 }
